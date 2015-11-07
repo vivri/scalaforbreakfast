@@ -1,6 +1,6 @@
-import org.scalatest.{Matchers, FlatSpec}
+package scalaforbreakfast
 
-import scalaforbreakfast.MutableStringImpl
+import org.scalatest.{FlatSpec, Matchers}
 
 class MutableStringSpec extends FlatSpec with Matchers {
 
