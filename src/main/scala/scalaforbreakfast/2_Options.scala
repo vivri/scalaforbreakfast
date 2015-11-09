@@ -39,57 +39,12 @@ import scala.annotation.tailrec
 
 
 /**
- * HINT 1:
+ * HINT:
  *
- * class TrinaryTree[T]
- *
- * def find (tree: TrinaryTree[T]): Option[T]
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * HINT 2: class TrinaryTree[T] (branches: ... , value: ... )
- *
- * def find (tree: TrinaryTree[T]): Option[T] = {
- *    // base case: found here! - Some(value)
- *
- *    // recursive case: (use collections!)
- *    1) find and enumerate the existing branches,
- *    2) use folding to get the value recursively; short circuit if found
+ * class TrinaryTree[T] {
+ *  def find (value: T): Option[T]
  * }
+ *
  */
 
 
@@ -107,9 +62,21 @@ import scala.annotation.tailrec
 
 
 
+/**
+ * SOLUTION (BETTER):
+ *
+ */
+case class TreeNode[T](left: Option[TreeNode[T]], center: Option[TreeNode[T]], right: Option[TreeNode[T]], something: T) {
 
+  def find(leaf: T): Option[T] = {
+    if (something == leaf)
+      return Some(something)
 
-
+    left.flatMap(_.find(leaf)).
+      getOrElse[Option[T]](center.flatMap(_.find(leaf))).
+      getOrElse[Option[T]](center.flatMap(_.find(leaf)))
+  }
+}
 
 
 
@@ -117,7 +84,7 @@ import scala.annotation.tailrec
 
 
 /**
- * SOLUTION:
+ * SOLUTION (WORSE):
  */
 
 class TrinaryTree[T] (val branches:
@@ -136,12 +103,11 @@ object TrinaryTree {
     List (tree.branches._1, tree.branches._2, tree.branches._3)
       .filter (_ != None)
       .map { _.get }
-      .foldLeft[Option[T]] (None) { (result, branch) =>  {
-        if (result != None)
-          result
-        else
-          find(value, branch)
+      .foldLeft[Option[T]] (None) { (result, branch) => result match {
+          case Some(x) => result
+          case None => find(value, branch)
         }
+
       }
   }
 }
